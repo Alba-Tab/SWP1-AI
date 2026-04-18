@@ -1,0 +1,23 @@
+CLAUDE.md
+# Entornos virtuales
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Variables de entorno (¡MUY IMPORTANTE por tu API Key!)
+.env
+
+# IDEs
+.vscode/
+.idea/
