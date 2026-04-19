@@ -33,6 +33,14 @@ def _parse_retry_seconds(error_msg: str) -> float:
     return _DEFAULT_RETRY_WAIT
 
 
+def _extract_json(raw: str) -> str:
+    raw = raw.strip()
+    match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw, re.DOTALL | re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return raw
+
+
 async def generate_diagram(request: GenerateRequest) -> GenerateResponse:
     user = build_user_prompt(request)
     last_error = None
@@ -51,12 +59,7 @@ async def generate_diagram(request: GenerateRequest) -> GenerateResponse:
                 ],
             )
 
-            raw = response.choices[0].message.content.strip()
-            if raw.startswith("```"):
-                raw = raw.split("```")[1]
-                if raw.startswith("json"):
-                    raw = raw[4:]
-
+            raw = _extract_json(response.choices[0].message.content)
             data = json.loads(raw)
             return GenerateResponse(**data)
 
@@ -71,5 +74,3 @@ async def generate_diagram(request: GenerateRequest) -> GenerateResponse:
                     await asyncio.sleep(wait)
                     continue
             raise
-
-    raise last_error
